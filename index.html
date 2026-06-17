@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robux Instan & Gamepass - Toko Top Up Game</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #0b0f19; color: #ffffff; padding-bottom: 50px; }
+        .navbar { background-color: #111827; padding: 15px 20px; border-bottom: 2px solid #1f2937; display: flex; justify-content: space-between; align-items: center; }
+        .navbar-brand { color: #f59e0b; font-weight: bold; font-size: 20px; text-decoration: none; }
+        .container { max-width: 800px; margin: 30px auto; padding: 0 20px; }
+        .grid-layout { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 600px) { .grid-layout { grid-template-columns: 1fr 2fr; } }
+        .card { background-color: #1f2937; border: 1px solid #374151; border-radius: 12px; padding: 20px; }
+        .logo-box { width: 60px; height: 60px; background-color: #f59e0b; color: #0b0f19; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900; margin-bottom: 15px; }
+        .text-muted { color: #9ca3af; font-size: 13px; line-height: 1.5; }
+        .title-section { margin-bottom: 15px; font-size: 16px; color: #f59e0b; font-weight: 600; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 12px; color: #9ca3af; margin-bottom: 5px; }
+        .form-input { width: 100%; background-color: #111827; border: 1px solid #374151; padding: 10px; border-radius: 8px; color: white; outline: none; }
+        .package-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .tab-container { display: flex; background-color: #111827; padding: 6px; border-radius: 10px; border: 1px solid #374151; margin-bottom: 20px; }
+        .tab-btn { flex: 1; background: none; border: none; color: #9ca3af; padding: 12px; font-weight: bold; font-size: 14px; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .tab-btn.active { background-color: #f59e0b; color: #0b0f19; }
+        .btn-paket { background-color: #111827; border: 1px solid #374151; padding: 15px; border-radius: 10px; cursor: pointer; text-align: left; width: 100%; color: white; transition: 0.2s; }
+        .btn-paket:hover { border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.05); }
+        .paket-nama { font-weight: bold; font-size: 14px; margin-bottom: 4px; }
+        .paket-harga { color: #f59e0b; font-size: 12px; font-weight: bold; }
+        .qris-popup { display: none; text-align: center; background-color: #111827; padding: 20px; border-radius: 12px; border: 2px dashed #f59e0b; margin-top: 15px; }
+        .qris-image-container { background-color: #ffffff; padding: 15px; border-radius: 8px; display: inline-block; margin: 15px 0; max-width: 260px; }
+        .qris-image-container img { width: 100%; height: auto; display: block; }
+        .status-badge { display: inline-block; background-color: rgba(16, 185, 129, 0.1); color: #10b981; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 15px; }
+        .btn-wa { background-color: #25d366; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 13px; text-decoration: none; display: inline-block; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="#" class="navbar-brand">Noya Store</a>
+    </nav>
+    <div class="container">
+        <div class="tab-container">
+            <button id="btn-instan" class="tab-btn active" onclick="switchMetode('instan')">Robux Instan (Login)</button>
+            <button id="btn-gamepass" class="tab-btn" onclick="switchMetode('gamepass')">Robux Gamepass (Link)</button>
+        </div>
+        <div class="grid-layout">
+            <div class="card" style="height: max-content;">
+                <div class="logo-box">R$</div>
+                <h2 id="info-title" style="font-size: 20px; margin-bottom: 5px;">Robux Instan</h2>
+                <p id="info-desc" class="text-muted">Robux langsung masuk ke akun via login kelompok. Proses aman tanpa menggunakan Gamepass.</p>
+            </div>
+            <div class="grid-layout" style="grid-template-columns: 1fr;">
+                <div class="card">
+                    <div id="form-title" class="title-section">1. Masukkan Akun Roblox</div>
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="user-roblox" class="form-input" placeholder="User Roblox Anda">
+                    </div>
+                    <div class="form-group" id="input-password-container">
+                        <label>Password</label>
+                        <input type="password" id="pass-roblox" class="form-input" placeholder="Password Akun">
+                    </div>
+                    <div class="form-group" id="input-link-container" style="display: none;">
+                        <label>Link Gamepass / Link Place</label>
+                        <input type="text" id="link-gamepass" class="form-input" placeholder="https://roblox.com...">
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="title-section">2. Pilih Paket & Langsung Bayar</div>
+                    <div class="package-grid" id="grid-paket-instan">
+                        <button class="btn-paket" onclick="prosesBeli('80 Robux', 16000)"><div class="paket-nama">80 Robux</div><div class="paket-harga">Beli - Rp 16.000</div></button>
+                        <button class="btn-paket" onclick="prosesBeli('160 Robux', 31000)"><div class="paket-nama">160 Robux</div><div class="paket-harga">Beli - Rp 31.000</div></button>
+                        <button class="btn-paket" onclick="prosesBeli('240 Robux', 46000)"><div class="paket-nama">240 Robux</div><div class="paket-harga">Beli - Rp 46.000</div></button>
+                        <button class="btn-paket" onclick="prosesBeli('320 Robux', 59500)"><div class="paket-nama">320 Robux</div><div class="paket-harga">Beli - Rp 59.500</div></button>
+                        <button class="btn-paket" onclick="prosesBeli('500 Robux', 75000)"><div class="paket-nama">500 Robux</div><div class="paket-harga">Beli - Rp 75.000</div></button>
+                        <button class="btn-paket" onclick="prosesBeli('1.000 Robux', 149000)"><div class="paket-nama">1.000 Robux</div><div class="paket-harga">Beli - Rp 149.000</div></button>
+                    </div>
+                    <div class="package-grid" id="grid-paket-gamepass" style="display: none;">
+                        <button class="btn-paket" onclick="prosesBeli('100 Robux Gamepass (bersih ~70)', 14000)"><div class="paket-nama">100 Robux</div><div class="paket-harga">Beli - Rp 14.000</div></button>
+                        <button class="btn-paket" onclick="prosesBeli('500 Robux Gamepass (bersih ~350)', 65000)"><div class="paket-nama">500 Robux</div><div class="paket-harga">Beli - Rp 65.000</div></button>
+                        <button class="btn-paket" onclick="prosesBeli('1.000 Robux Gamepass (bersih ~700)', 125000)"><div class="paket-nama">1.000 Robux</div><div class="paket-harga">Beli - Rp 125.000</div></button>
+                    </div>
+                </div>
+                <div class="card qris-popup" id="area-qris">
+                    <h4 style="color: #f59e0b; margin-bottom: 5px;">QRIS ALL PAYMENT</h4>
+                    <p style="font-size: 13px; color: #9ca3af;">Silakan scan barcode untuk membayar paket <b id="text-paket-pilihan" style="color:#f59e0b;"></b> sebesar <b id="qris-total-text" style="color: #ffffff;">Rp 0</b></p>
+                    <div class="qris-image-container"><img src="diki1232.jpg" alt="QRIS ALL PAYMENT"></div><br>
+                    <div class="status-badge">⏳ Menunggu Pembayaran...</div>
+                    <p style="font-size: 12px; color: #9ca3af; margin-bottom: 15px;">Sudah transfer? Klik tombol di bawah untuk konfirmasi ke Admin.</p>
+                    <button class="btn-wa" onclick="kirimBuktiWA()">💬 Konfirmasi via WhatsApp</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const NOMOR_WHATSAPP = "6281528752292"; 
+        let metodeSaatIni = "instan"; 
+        let paketGlobal = "";
+        let hargaGlobal = 0;
+
+        function switchMetode(metode) {
+            metodeSaatIni = metode;
+            document.getElementById('area-qris').style.display = 'none';
+
+            if (metode === 'instan') {
+                document.getElementById('btn-instan').classList.add('active');
+                document.getElementById('btn-gamepass').classList.remove('active');
+                
+                document.getElementById('info-title').innerText = "Robux Instan";
+                document.getElementById('info-desc').innerText = "Robux langsung masuk ke akun via login kelompok. Proses aman tanpa menggunakan Gamepass.";
+                document.getElementById('form-title').innerText = "1. Masukkan Akun Roblox";
+                
+                // Menu Instan memunculkan kolom Password
+                document.getElementById('input-password-container').style.display = 'block';
+                document.getElementById('input-link-container').style.display = 'none';
+                
+                document.getElementById('grid-paket-instan').style.display = 'grid';
+                document.getElementById('grid-paket-gamepass').style.display = 'none';
+            } else {
+                document.getElementById('btn-instan').classList.remove('active');
+                document.getElementById('btn-gamepass').classList.add('active');
+                
+                document.getElementById('info-title').innerText = "Robux Gamepass";
+                document.getElementById('info-desc').innerText = "Robux baru bisa digunakan setelah 5-7 hari. Paling hemat untuk nominal besar, 100% aman tanpa password. saldo masuk status pending 5-7 hari sesuai sistem Roblox.";
+                document.getElementById('form-title').innerText = "1. Masukkan Data Akun";
+                
+                // Menu Gamepass menyembunyikan kolom Password DAN kolom Link (Cuma Username saja)
+                document.getElementById('input-password-container').style.display = 'none';
+                document.getElementById('input-link-container').style.display = 'none';
+                
+                document.getElementById('grid-paket-instan').style.display = 'none';
+                document.getElementById('grid-paket-gamepass').style.display = 'grid';
+            }
+        }
+
+        function prosesBeli(namaPaket, hargaPaket) {
+            const user = document.getElementById('user-roblox').value.trim();
+            const pass = document.getElementById('pass-roblox').value.trim();
+
+            if (!user) { 
+                alert("Mohon isi Username Roblox terlebih dahulu bosku!"); 
+                return; 
+            }
+            // Validasi password hanya berlaku untuk metode instan
+            if (metodeSaatIni === 'instan' && !pass) { 
+                alert("Metode instan wajib mengisi Password akun!"); 
+                return; 
+            }
+
+            paketGlobal = namaPaket;
+            hargaGlobal = hargaPaket;
+            document.getElementById('text-paket-pilihan').innerText = namaPaket;
+            document.getElementById('qris-total-text').innerText = `Rp ${hargaPaket.toLocaleString('id-ID')}`;
+            document.getElementById('area-qris').style.display = 'block';
+            document.getElementById('area-qris').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function kirimBuktiWA() {
+            const user = document.getElementById('user-roblox').value.trim();
+            const pass = document.getElementById('pass-roblox').value.trim();
+
+            let teksPesan = `Halo Admin, saya sudah transfer via QRIS:\n\n` +
+                            `▪️ *Metode:* Top Up ${metodeSaatIni === 'instan' ? 'Robux Instan' : 'Robux Gamepass'}\n` +
+                            `▪️ *Produk:* ${paketGlobal}\n` +
+                            `▪️ *Total Bayar:* Rp ${hargaGlobal.toLocaleString('id-ID')}\n` +
+                            `▪️ *Username Roblox:* ${user}\n`;
+
+            if (metodeSaatIni === 'instan') { 
+                teksPesan += `▪️ *Password Roblox:* ${pass}\n\n`; 
+            } else {
+                teksPesan += `\n`;
+            }
+
+            teksPesan += `Berikut saya lampirkan bukti transfernya. Tolong diproses min!`;
+            const urlWhatsApp = `https://wa.me/6281528752292?text=${encodeURIComponent(teksPesan)}`;
+            window.open(urlWhatsApp, '_blank');
+        }
+    </script>
+</body>
+</html>
